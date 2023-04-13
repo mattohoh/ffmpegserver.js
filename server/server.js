@@ -37,6 +37,7 @@ var optionSpec = {
   options: [
     { option: 'help', alias: 'h', type: 'Boolean',  description: 'displays help'},
     { option: 'port', alias: 'p', type: 'Int',      description: 'port',  default: '8080'},
+    { option: 'quiet', type: 'Boolean', description: 'print only necessary logs to console' },
     { option: 'base-dir',         type: 'String',   description: 'folder to serve', default: 'public'},
     { option: 'video-dir',        type: 'String',   description: 'folder to save video files to', default: 'output'},
     { option: 'frame-dir',        type: 'String',   description: 'folder to save frames to', default: 'output'},

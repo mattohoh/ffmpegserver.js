@@ -56,6 +56,8 @@ var VideoServer = function(options, startedCallback) {
     files: {},
   };
 
+  this.quiet = options.quiet === true
+
   Object.keys(options).forEach(function(prop) {
     g[prop] = options[prop];
   });
@@ -108,6 +110,7 @@ var VideoServer = function(options, startedCallback) {
   var socketServer;
 
   function serverListeningHandler() {
+
     var SocketServer = require('./socket-server');
     socketServer = options.socketServer || new SocketServer(server, {
       videoDir: options.videoDir,
@@ -116,9 +119,10 @@ var VideoServer = function(options, startedCallback) {
       allowArbitraryFfmpegArguments: options.allowArbitraryFfmpegArguments,
     });
     socketServer.setVideoServer(self);
+    this.port = g.port
     console.log("Listening on port:", g.port);
     if (startedCallback) {
-      startedCallback();
+      startedCallback(this);
     }
   };
 

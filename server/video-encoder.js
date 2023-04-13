@@ -83,7 +83,7 @@ function VideoEncoder(client, server, id, options) {
   }
 
   var handleStart = function(data) {
-    debug("start: " + JSON.stringify(data, null, 2));
+    console.log("start: " + JSON.stringify(data, null, 2));
     if (name !== undefined) {
       return sendCmd("error", "video already in progress");
     }
@@ -182,7 +182,7 @@ function VideoEncoder(client, server, id, options) {
   var EXPECTED_HEADER = 'data:image/png;base64,';
   var handleFrame = function(data) {
     if (name === undefined) {
-      return sendCmd("error", "video not started");
+      return sendCmd("error", "video not started when handle frame");
     }
     var dataURL = data.dataURL;
     if (dataURL.substr(0, EXPECTED_HEADER.length) !== EXPECTED_HEADER) {
@@ -206,6 +206,7 @@ function VideoEncoder(client, server, id, options) {
         }
         frames.push(filename);
         sendCmd("frame", { frameNum: frameNum })
+        if (!server.quiet)
         console.log('saved frame: ' + filename);
       }
       if (numWriting === 0) {
@@ -216,7 +217,7 @@ function VideoEncoder(client, server, id, options) {
 
   var handleEnd = function(data) {
     if (name === undefined) {
-      return sendCmd("error", "video not started");
+      return sendCmd("error", "video not started when handle end");
     }
     ended = true;
     checkForEnd();

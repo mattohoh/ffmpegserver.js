@@ -518,7 +518,7 @@ define('src/virtualsocket',[],function() {
 
   var WebSocketClient = function(options) {
     options = options || {};
-    var log = options.quiet === true ? console.log.bind(console) : function() {};
+    var log = options.quiet === true ? function() {} :  console.log.bind(console)
     var _socket;
 
     var url = options.url || "ws://" + window.location.host;
@@ -571,6 +571,19 @@ define('src/virtualsocket',[],function() {
     };
 
     this.send = function(msg) {
+      if (msg.data) {
+        const origMsgData = msg.data
+        for (let key in msg.data) {
+          const typeString = Object.prototype.toString.call(msg.data[key]);
+          if (typeof msg.data[key] === 'object' && typeString !== '[object Object]') {
+            if (origMsgData === msg.data) {
+              msg.data = { ...msg.data }
+            }
+            // remove the key from msg.data
+            delete msg.data[key]
+          }
+        }
+      }
       sendLowLevel(JSON.stringify(msg));
     };
 
@@ -860,6 +873,7 @@ define('src/ffmpegserver',[
     function _handleStart(data) {
       _connected = true;
       _frameEncoder.start( _settings );
+      _emit('started');
       _checkProcess();
     }
 
@@ -868,7 +882,9 @@ define('src/ffmpegserver',[
     _frameEncoder.on('end', _handleEnd);
     _frameEncoder.on('frame', _handleFrame);
     _frameEncoder.on('progress', _handleProgress);
-
+    _frameEncoder.addEventListener('connect', () => {
+      _emit('connected');
+    })
   }
 
   return FFMpegServer;
